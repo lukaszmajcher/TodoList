@@ -8,4 +8,7 @@ public interface TasksRepository {
 
     List<Task> fetchAll();
 
+    Task getchById(Long id);
+
+    void deleteById(Long id);
 }
