@@ -8,7 +8,7 @@ Content-Type: application/json
 {
   "id": 1,
   "title": "Dokończyć zadanie",
-  "author": "Luk",git
+  "author": "Luk",
   "deadline": [2019,12,3]
 }
 

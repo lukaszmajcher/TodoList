@@ -1,4 +1,6 @@
-package pl.majchrosoft.ToDoList.tasks;
+package pl.majchrosoft.ToDoList.tasks.boundary;
+
+import pl.majchrosoft.ToDoList.tasks.entity.Task;
 
 import java.util.List;
 
@@ -8,7 +10,7 @@ public interface TasksRepository {
 
     List<Task> fetchAll();
 
-    Task getchById(Long id);
+    Task fetchById(Long id);
 
     void deleteById(Long id);
 }

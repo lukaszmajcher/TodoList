@@ -1,6 +1,7 @@
-package pl.majchrosoft.ToDoList.tasks;
+package pl.majchrosoft.ToDoList.tasks.boundary;
 
 import org.springframework.stereotype.Repository;
+import pl.majchrosoft.ToDoList.tasks.entity.Task;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -23,7 +24,7 @@ public class MemoryTasksRepository implements TasksRepository {
     }
 
     @Override
-    public Task getchById(Long id) {
+    public Task fetchById(Long id) {
         return tasks.stream()
                 .filter(task -> id.equals(task.getId()))
                 .findFirst()
