@@ -6,10 +6,8 @@ POST localhost:9000/api/tasks
 Content-Type: application/json
 
 {
-  "id": 1,
   "title": "Dokończyć zadanie",
-  "author": "Luk",
-  "deadline": [2019,12,3]
+  "description": "AAAAAA"
 }
 
 ###
@@ -17,6 +15,11 @@ Content-Type: application/json
 DELETE localhost:9000/api/tasks/1
 
 ###
-PUT localhost:9000/api/tasks
+PUT localhost:9000/api/tasks/0
+Content-Type: application/json
 
+{
+  "title": "Dokończyć zadanie z modulu 1",
+  "description": "Zarejestrować się na Facebooko"
+}
 ###

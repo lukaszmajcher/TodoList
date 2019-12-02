@@ -48,9 +48,9 @@ public class TasksController {
     }
 
     @PostMapping
-    public void addTask(@RequestBody Task task) {
+    public void addTask(@RequestBody CreateTaskRequest task) {
         log.info("Storing new task: {}", task);
-        tasksRepository.add(task);
+        tasksService.addTask(task.title, task.description);
     }
 
     @DeleteMapping(path = "/{id}")
@@ -59,16 +59,18 @@ public class TasksController {
         tasksRepository.deleteById(id);
     }
 
-    @PutMapping
-    public void updateTask() {
+    @PutMapping(path = "/{id}")
+    public void updateTask(@PathVariable Long id, @RequestBody UpdateTaskRequest request) {
         log.info("Update task");
+        tasksService.updateTask(id, request.title, request.description);
     }
 
     private TaskResponse toTaskResponse(Task task) {
         return new TaskResponse(
                 task.getId(),
                 task.getTitle(),
-                task.getDescription()
+                task.getDescription(),
+                task.getCreatedAt()
         );
     }
 }
