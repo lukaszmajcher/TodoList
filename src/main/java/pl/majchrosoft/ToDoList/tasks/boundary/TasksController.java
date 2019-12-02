@@ -8,6 +8,7 @@ import pl.majchrosoft.ToDoList.tasks.entity.Task;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -27,9 +28,10 @@ public class TasksController {
     }
 
     @GetMapping
-    public List<TaskResponse> getTasks() {
-        log.info("Fetching all tasks ...");
-        return tasksRepository.fetchAll()
+    public List<TaskResponse> getTasks(@RequestParam Optional<String> query) {
+        log.info("Fetching all tasks with filter: {} ", query);
+        return query.map(tasksService::filterAllByQuery)
+                .orElseGet(tasksService::fetchAll)
                 .stream()
                 .map(this::toTaskResponse)
                 .collect(Collectors.toList());
