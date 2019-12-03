@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import pl.majchrosoft.ToDoList.exceptions.NotFoundException;
 import pl.majchrosoft.ToDoList.tasks.control.TasksService;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TasksController {
 
+    private final StorageService storageService;
     private final TasksRepository tasksRepository;
     private final TasksService tasksService;
 
@@ -47,6 +49,19 @@ public class TasksController {
     public TaskResponse getTaskById(@PathVariable Long id) {
         log.info("Fetching all task with id: {}", id);
         return toTaskResponse(tasksRepository.fetchById(id));
+    }
+
+    @GetMapping(path = "/{id}/attachments/{filename}")
+    public ResponseEntity getAttachment(@PathVariable Long id, @PathVariable Long filename) {
+        // pobierać plik
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping(path = "/{id}/attachments")
+    public ResponseEntity addAttachment(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
+        log.info("Hendling file upload: {}", file.getName());
+        storageService.saveFile(id, file);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping
