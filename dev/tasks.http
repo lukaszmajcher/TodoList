@@ -15,7 +15,7 @@ Content-Type: application/json
 DELETE localhost:9000/api/tasks/1
 
 ###
-PUT localhost:9000/api/tasks/0
+PUT localhost:9000/api/tasks/10
 Content-Type: application/json
 
 {

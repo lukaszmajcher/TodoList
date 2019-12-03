@@ -1,6 +1,7 @@
 package pl.majchrosoft.ToDoList.tasks.boundary;
 
 import org.springframework.stereotype.Repository;
+import pl.majchrosoft.ToDoList.exceptions.NotFoundException;
 import pl.majchrosoft.ToDoList.tasks.entity.Task;
 
 import java.util.*;
@@ -33,10 +34,10 @@ public class MemoryTasksRepository implements TasksRepository {
 
     @Override
     public void update(Long id, String title, String description) {
-        findById(id).ifPresent(task -> {
-            task.setTitle(title);
-            task.setDescription(description);
-        });
+        Task task = findById(id)
+                .orElseThrow(() -> new NotFoundException("Task with id not found: " + id));
+        task.setTitle(title);
+        task.setDescription(description);
     }
 
     private Optional<Task> findById(Long id) {
