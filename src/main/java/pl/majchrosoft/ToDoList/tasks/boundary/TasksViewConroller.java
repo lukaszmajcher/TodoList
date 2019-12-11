@@ -4,11 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import pl.majchrosoft.ToDoList.tasks.control.TasksService;
+import pl.majchrosoft.ToDoList.tasks.entity.Task;
+
+import java.io.IOException;
 
 @Slf4j
 @Controller
@@ -16,6 +17,7 @@ import pl.majchrosoft.ToDoList.tasks.control.TasksService;
 public class TasksViewConroller {
 
     private final TasksService tasksService;
+    private final StorageService storageService;
 
     @GetMapping("/")
     public String home(Model model) {
@@ -25,9 +27,10 @@ public class TasksViewConroller {
     }
 
     @PostMapping("/tasks")
-    public String addTask(@ModelAttribute("newTask") CreateTaskRequest request) {
-        log.info("Dodaje zadanie ...");
-        tasksService.addTask(request.title, request.description);
+    public String addTask(@ModelAttribute("newTask") CreateTaskRequest request,
+                          @RequestParam("attachment") MultipartFile attachment) throws IOException {
+        Task task = tasksService.addTask(request.title, request.description);
+        storageService.saveFile(task.getId(), attachment);
         return "redirect:/";
     }
 
