@@ -5,6 +5,8 @@ import pl.majchrosoft.ToDoList.Clock;
 import pl.majchrosoft.ToDoList.tasks.boundary.TasksRepository;
 import pl.majchrosoft.ToDoList.tasks.entity.Task;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -27,12 +29,17 @@ public class TasksService {
                 new Task(nextTaskId.getAndIncrement(),
                         title,
                         description,
-                        clock.time())
+                        clock.time(),
+                        new ArrayList<>())
         );
     }
 
     public void updateTask(Long id, String title, String description) {
         tasksRepository.update(id, title, description);
+    }
+
+    public Task fetchById(Long id) {
+        return tasksRepository.fetchById(id);
     }
 
     public List<Task> fetchAll(){
@@ -47,5 +54,9 @@ public class TasksService {
                             task.getDescription().contains(query);
                 })
                 .collect(Collectors.toList());
+    }
+
+    public void deleteTask(Long id) {
+        tasksRepository.deleteById(id);
     }
 }

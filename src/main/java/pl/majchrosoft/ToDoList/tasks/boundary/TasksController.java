@@ -8,16 +8,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 import pl.majchrosoft.ToDoList.exceptions.NotFoundException;
 import pl.majchrosoft.ToDoList.tasks.control.TasksService;
 import pl.majchrosoft.ToDoList.tasks.entity.Task;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.MalformedURLException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,7 +27,6 @@ import java.util.stream.Collectors;
 public class TasksController {
 
     private final StorageService storageService;
-    private final TasksRepository tasksRepository;
     private final TasksService tasksService;
 
     @PostConstruct
@@ -53,7 +50,7 @@ public class TasksController {
     public ResponseEntity getTaskById(@PathVariable Long id) {
         log.info("Fetching all task with id: {}", id);
         try {
-            TaskResponse taskResponse = toTaskResponse(tasksRepository.fetchById(id));
+            TaskResponse taskResponse = toTaskResponse(tasksService.fetchById(id));
             return ResponseEntity.ok(taskResponse);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
@@ -84,7 +81,7 @@ public class TasksController {
     @DeleteMapping(path = "/{id}")
     public void deleteTask(@PathVariable Long id) {
         log.info("Delete task");
-        tasksRepository.deleteById(id);
+        tasksService.deleteTask(id);
         // 204
     }
 
@@ -110,13 +107,11 @@ public class TasksController {
             @PathVariable Long id,
             @RequestParam("file") MultipartFile file) throws IOException {
         log.info("Hendling file upload: {}", file.getName());
-        storageService.saveFile(id, file);
+        Task task = tasksService.fetchById(id);
+        Path path = storageService.saveFile(id, file);
+        task.getFiles().add(path.toString());
         return ResponseEntity.noContent().build();
     }
-
-
-
-
 
     @GetMapping(path = "/hello")
     public String hello() {
@@ -129,7 +124,8 @@ public class TasksController {
                 task.getId(),
                 task.getTitle(),
                 task.getDescription(),
-                task.getCreatedAt()
+                task.getCreatedAt(),
+                task.getFiles()
         );
     }
 }
