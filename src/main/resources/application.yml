@@ -3,3 +3,7 @@ server:
 
 storage:
   path: D:\aaa
+spring:
+  h2:
+    console:
+      enabled: true

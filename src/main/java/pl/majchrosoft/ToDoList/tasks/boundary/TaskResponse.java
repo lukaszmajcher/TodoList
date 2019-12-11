@@ -13,5 +13,5 @@ public class TaskResponse {
     String title;
     String description;
     LocalDateTime createdAt;
-    List<String> files;
+//    List<String> files;
 }

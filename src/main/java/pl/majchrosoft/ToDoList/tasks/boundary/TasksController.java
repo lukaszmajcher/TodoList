@@ -108,8 +108,8 @@ public class TasksController {
             @RequestParam("file") MultipartFile file) throws IOException {
         log.info("Hendling file upload: {}", file.getName());
         Task task = tasksService.fetchById(id);
-        Path path = storageService.saveFile(id, file);
-        task.getFiles().add(path.toString());
+//        Path path = storageService.saveFile(id, file);
+//        task.getFiles().add(path.toString());
         return ResponseEntity.noContent().build();
     }
 
@@ -124,8 +124,7 @@ public class TasksController {
                 task.getId(),
                 task.getTitle(),
                 task.getDescription(),
-                task.getCreatedAt(),
-                task.getFiles()
+                task.getCreatedAt()
         );
     }
 }

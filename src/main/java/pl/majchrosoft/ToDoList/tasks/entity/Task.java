@@ -1,18 +1,33 @@
 package pl.majchrosoft.ToDoList.tasks.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
-@AllArgsConstructor
+@Table("tasks")
 public class Task {
-    private long id;
+
+    @Id
+    private Long id;
     private String title;
     private String description;
     private LocalDateTime createdAt;
-    private List<String> files;
+
+    public Task(String title, String description, LocalDateTime createdAt) {
+        this.title = title;
+        this.description = description;
+        this.createdAt = createdAt;
+    }
+
+    //    private List<String> files;
+
+
+    public Set<String> getFiles() {
+        return new HashSet<>();
+    }
 }
