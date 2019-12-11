@@ -50,17 +50,52 @@ public class TasksController {
     }
 
     @GetMapping(path = "/{id}")
-    public TaskResponse getTaskById(@PathVariable Long id) {
+    public ResponseEntity getTaskById(@PathVariable Long id) {
         log.info("Fetching all task with id: {}", id);
-        return toTaskResponse(tasksRepository.fetchById(id));
+        try {
+            TaskResponse taskResponse = toTaskResponse(tasksRepository.fetchById(id));
+            return ResponseEntity.ok(taskResponse);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
+
+    @PostMapping
+    public ResponseEntity addTask(@RequestBody CreateTaskRequest task) {
+        log.info("Storing new task: {}", task);
+        tasksService.addTask(task.title, task.description);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .build();
+    }
+
+    @PutMapping(path = "/{id}")
+    public ResponseEntity updateTask( @PathVariable Long id,
+                                     @RequestBody UpdateTaskRequest request) {
+        try {
+            tasksService.updateTask(id, request.title, request.description);
+            return ResponseEntity.noContent().build();
+        } catch (NotFoundException e) {
+            log.error("Failed to update task", e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping(path = "/{id}")
+    public void deleteTask(@PathVariable Long id) {
+        log.info("Delete task");
+        tasksRepository.deleteById(id);
+        // 204
+    }
+
+
 
     @GetMapping(path = "/{id}/attachments/{filename}")
     public ResponseEntity getAttachment(
             @PathVariable Long id,
             @PathVariable String filename,
             HttpServletRequest request) throws IOException {
-        // pobierać plik
+
         Resource resource = storageService.loadFile(filename);
         String mimeType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
         if (mimeType == null)
@@ -71,56 +106,17 @@ public class TasksController {
     }
 
     @PostMapping(path = "/{id}/attachments")
-    public ResponseEntity addAttachment(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity addAttachment(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file) throws IOException {
         log.info("Hendling file upload: {}", file.getName());
         storageService.saveFile(id, file);
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping
-    public void addTask(@RequestBody CreateTaskRequest task) {
-        log.info("Storing new task: {}", task);
-        tasksService.addTask(task.title, task.description);
-        // 201
-    }
 
-    @DeleteMapping(path = "/{id}")
-    public void deleteTask(@PathVariable Long id) {
-        log.info("Delete task");
-        tasksRepository.deleteById(id);
-        // 204
-    }
 
-    @PutMapping(path = "/{id}")
-    public ResponseEntity updateTask(HttpServletResponse response,
-                           @PathVariable Long id,
-                           @RequestBody UpdateTaskRequest request) throws IOException {
-        // Gdy nie ma ExceptionHendlera, są 3 sposoby
-//        try {
-//            tasksService.updateTask(id, request.title, request.description);
-//        } catch (NotFoundException e) {
-//            log.error("Failed to update task", e);
-//            response.sendError(HttpStatus.NOT_FOUND.value(), e.getMessage());
-//        }
 
-//        try {
-//            tasksService.updateTask(id, request.title, request.description);
-//        } catch (NotFoundException e) {
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-//        }
-
-        //Gdy jest globalny Exception Handler
-//        tasksService.updateTask(id, request.title, request.description);
-
-        //Ostatni sposób to pełna obsługa ResponseEntity
-        try {
-            tasksService.updateTask(id, request.title, request.description);
-            return ResponseEntity.noContent().build();
-        } catch (NotFoundException e) {
-            log.error("Failed to update task", e);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
 
     @GetMapping(path = "/hello")
     public String hello() {

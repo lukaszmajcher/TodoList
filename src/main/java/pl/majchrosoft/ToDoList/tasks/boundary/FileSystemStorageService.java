@@ -1,30 +1,31 @@
 package pl.majchrosoft.ToDoList.tasks.boundary;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.xml.xpath.XPath;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
+@Slf4j
 public class FileSystemStorageService implements StorageService {
 
-    private static final Path PATH = Path.of("D:\\aaa");
+    @Value("${storage.path}")
+    private String path;
 
     @Override
     public void saveFile(Long taskId, MultipartFile file) throws IOException {
-
-        Path targetPath = PATH.resolve(file.getName());
+        Path targetPath = Path.of(path).resolve(file.getName());
         Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
-
     }
 
     @Override
     public Resource loadFile(String filename) throws MalformedURLException {
-        return new UrlResource(PATH.resolve(filename).toUri());
+        return new UrlResource(Path.of(path).resolve(filename).toUri());
     }
 }
