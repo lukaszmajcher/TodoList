@@ -2,9 +2,10 @@ package pl.majchrosoft.ToDoList.tasks.boundary;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import pl.majchrosoft.ToDoList.tasks.entity.Attachment;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -13,5 +14,5 @@ public class TaskResponse {
     String title;
     String description;
     LocalDateTime createdAt;
-//    List<String> files;
+    Set<String> attachments;
 }

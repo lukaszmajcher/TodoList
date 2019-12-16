@@ -19,10 +19,11 @@ public class FileSystemStorageService implements StorageService {
     private String path;
 
     @Override
-    public Path saveFile(Long taskId, MultipartFile file) throws IOException {
-        Path targetPath = Path.of(path).resolve(file.getOriginalFilename());
+    public String saveFile(Long taskId, MultipartFile file) throws IOException {
+        String filename = file.getOriginalFilename();
+        Path targetPath = Path.of(path).resolve(filename);
         Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
-        return targetPath;
+        return filename;
     }
 
     @Override

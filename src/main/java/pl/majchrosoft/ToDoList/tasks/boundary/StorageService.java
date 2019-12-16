@@ -9,6 +9,6 @@ import java.nio.file.Path;
 
 public interface StorageService {
 
-    Path saveFile(Long taskId, MultipartFile file) throws IOException;
+    String saveFile(Long taskId, MultipartFile file) throws IOException;
     Resource loadFile(String filename) throws MalformedURLException;
 }

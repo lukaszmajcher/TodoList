@@ -60,9 +60,9 @@ public class TasksService {
     public void addTaskAttachments(Long id, MultipartFile file) throws IOException {
         Task task = tasksRepository.fetchById(id);
         if (!file.isEmpty()) {
-            Path path = storageService.saveFile(id, file);
-            task.addAttachment(path.toString()););
+            String filename = storageService.saveFile(id, file);
+            task.addAttachment(filename);
+            tasksRepository.save(task);
         }
-        tasksRepository.save(task);
     }
 }

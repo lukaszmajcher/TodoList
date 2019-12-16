@@ -33,6 +33,11 @@ public class MemoryTasksRepository implements TasksRepository {
     }
 
     @Override
+    public void save(Task task) {
+        tasks.add(task);
+    }
+
+    @Override
     public void update(Long id, String title, String description) {
         Task task = findById(id)
                 .orElseThrow(() -> new NotFoundException("Task with id not found: " + id));

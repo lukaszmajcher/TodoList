@@ -105,10 +105,6 @@ public class TasksController {
     public ResponseEntity addAttachment(
             @PathVariable Long id,
             @RequestParam("file") MultipartFile file) throws IOException {
-        log.info("Hendling file upload: {}", file.getName());
-//        Task task = tasksService.fetchById(id);
-//        Path path = storageService.saveFile(id, file);
-//        task.getFiles().add(path.toString());
         tasksService.addTaskAttachments(id, file);
         return ResponseEntity.noContent().build();
     }
@@ -124,7 +120,8 @@ public class TasksController {
                 task.getId(),
                 task.getTitle(),
                 task.getDescription(),
-                task.getCreatedAt()
+                task.getCreatedAt(),
+                task.getAttachments()
         );
     }
 }

@@ -30,8 +30,7 @@ public class TasksViewConroller {
     public String addTask(@ModelAttribute("newTask") CreateTaskRequest request,
                           @RequestParam("attachment") MultipartFile attachment) throws IOException {
         Task task = tasksService.addTask(request.title, request.description);
-
-//        storageService.saveFile(task.getId(), attachment);
+        tasksService.addTaskAttachments(task.getId(), attachment);
         return "redirect:/";
     }
 
