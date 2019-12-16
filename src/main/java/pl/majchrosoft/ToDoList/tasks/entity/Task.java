@@ -27,13 +27,11 @@ public class Task {
         this.createdAt = createdAt;
     }
 
-    public void addAttachment(String filename) {
-        attachments.add(new Attachment(filename));
+    public void addAttachment(String filename, String comment) {
+        attachments.add(new Attachment(filename, comment));
     }
 
-    public Set<String> getAttachments() {
-        return attachments.stream()
-                .map(Attachment::getFilename)
-                .collect(toSet());
+    public Set<Attachment> getAttachments() {
+        return attachments;
     }
 }

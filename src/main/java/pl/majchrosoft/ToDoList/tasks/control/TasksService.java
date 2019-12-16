@@ -57,11 +57,11 @@ public class TasksService {
         tasksRepository.deleteById(id);
     }
 
-    public void addTaskAttachments(Long id, MultipartFile file) throws IOException {
+    public void addTaskAttachments(Long id, MultipartFile file, String comment) throws IOException {
         Task task = tasksRepository.fetchById(id);
         if (!file.isEmpty()) {
             String filename = storageService.saveFile(id, file);
-            task.addAttachment(filename);
+            task.addAttachment(filename, comment);
             tasksRepository.save(task);
         }
     }

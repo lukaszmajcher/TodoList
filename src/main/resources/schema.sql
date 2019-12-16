@@ -12,6 +12,7 @@ CREATE TABLE tasks
 CREATE TABLE attachments
 (
     filename VARCHAR(100) UNIQUE,
+    comment VARCHAR(1024),
     tasks    NUMERIC NOT NULL,
     FOREIGN KEY (tasks) REFERENCES tasks (id)
 );
