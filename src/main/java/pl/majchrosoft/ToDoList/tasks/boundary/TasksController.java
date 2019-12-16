@@ -28,13 +28,6 @@ public class TasksController {
     private final StorageService storageService;
     private final TasksService tasksService;
 
-    @PostConstruct
-    void init() {
-        tasksService.addTask("Dokonczyc zadanie z modulu 1", "Rejestracja na FB");
-        tasksService.addTask("Obejrzec modul 2", "Wprowadzenie do Springa");
-        tasksService.addTask("Stworzyc wlasny projekt na Githubie", "https://github.com");
-    }
-
     @GetMapping
     public List<TaskResponse> getTasks(@RequestParam Optional<String> query) {
         log.info("Fetching all tasks with filter: {} ", query);
@@ -116,5 +109,18 @@ public class TasksController {
         return "tasksRepository.fetchAll()";
     }
 
+
+    @PostMapping(path = "/{id}/tags")
+    public ResponseEntity addTag(@PathVariable Long id, @RequestParam AddTagRequest request) {
+        tasksService.addTag(id, request.tagId);
+        return ResponseEntity.ok().build();
+
+    }
+
+    @DeleteMapping(path = "/{id}/tags/{tagId}")
+    public ResponseEntity removeTag(@PathVariable Long id, @PathVariable Long tagId) {
+        tasksService.removeTag(id, tagId);
+        return ResponseEntity.noContent().build();
+    }
 
 }
