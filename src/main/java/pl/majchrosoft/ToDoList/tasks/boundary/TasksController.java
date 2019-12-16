@@ -15,7 +15,6 @@ import pl.majchrosoft.ToDoList.tasks.entity.Task;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -107,9 +106,10 @@ public class TasksController {
             @PathVariable Long id,
             @RequestParam("file") MultipartFile file) throws IOException {
         log.info("Hendling file upload: {}", file.getName());
-        Task task = tasksService.fetchById(id);
+//        Task task = tasksService.fetchById(id);
 //        Path path = storageService.saveFile(id, file);
 //        task.getFiles().add(path.toString());
+        tasksService.addTaskAttachments(id, file);
         return ResponseEntity.noContent().build();
     }
 

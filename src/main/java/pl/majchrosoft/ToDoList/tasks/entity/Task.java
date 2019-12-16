@@ -7,16 +7,19 @@ import org.springframework.data.relational.core.mapping.Table;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toSet;
 
 @Data
 @Table("tasks")
 public class Task {
-
     @Id
     private Long id;
     private String title;
     private String description;
     private LocalDateTime createdAt;
+    private Set<Attachment> attachments;
 
     public Task(String title, String description, LocalDateTime createdAt) {
         this.title = title;
@@ -24,10 +27,13 @@ public class Task {
         this.createdAt = createdAt;
     }
 
-    //    private List<String> files;
+    public void addAttachment(String filename) {
+        attachments.add(new Attachment(filename));
+    }
 
-
-    public Set<String> getFiles() {
-        return new HashSet<>();
+    public Set<String> getAttachments() {
+        return attachments.stream()
+                .map(Attachment::getFilename)
+                .collect(toSet());
     }
 }
