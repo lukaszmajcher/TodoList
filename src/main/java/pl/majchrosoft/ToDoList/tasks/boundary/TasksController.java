@@ -28,20 +28,13 @@ public class TasksController {
     private final StorageService storageService;
     private final TasksService tasksService;
 
-    @PostConstruct
-    void init() {
-        tasksService.addTask("Dokonczyc zadanie z modulu 1", "Rejestracja na FB");
-        tasksService.addTask("Obejrzec modul 2", "Wprowadzenie do Springa");
-        tasksService.addTask("Stworzyc wlasny projekt na Githubie", "https://github.com");
-    }
-
     @GetMapping
     public List<TaskResponse> getTasks(@RequestParam Optional<String> query) {
         log.info("Fetching all tasks with filter: {} ", query);
         return query.map(tasksService::filterAllByQuery)
                 .orElseGet(tasksService::fetchAll)
                 .stream()
-                .map(this::toTaskResponse)
+                .map(TaskResponse::from)
                 .collect(Collectors.toList());
     }
 
@@ -49,7 +42,7 @@ public class TasksController {
     public ResponseEntity getTaskById(@PathVariable Long id) {
         log.info("Fetching all task with id: {}", id);
         try {
-            TaskResponse taskResponse = toTaskResponse(tasksService.fetchById(id));
+            TaskResponse taskResponse = TaskResponse.from(tasksService.fetchById(id));
             return ResponseEntity.ok(taskResponse);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
@@ -104,12 +97,9 @@ public class TasksController {
     @PostMapping(path = "/{id}/attachments")
     public ResponseEntity addAttachment(
             @PathVariable Long id,
-            @RequestParam("file") MultipartFile file) throws IOException {
-        log.info("Hendling file upload: {}", file.getName());
-//        Task task = tasksService.fetchById(id);
-//        Path path = storageService.saveFile(id, file);
-//        task.getFiles().add(path.toString());
-        tasksService.addTaskAttachments(id, file);
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("comment") String comment) throws IOException {
+        tasksService.addTaskAttachments(id, file, comment);
         return ResponseEntity.noContent().build();
     }
 
@@ -119,12 +109,18 @@ public class TasksController {
         return "tasksRepository.fetchAll()";
     }
 
-    private TaskResponse toTaskResponse(Task task) {
-        return new TaskResponse(
-                task.getId(),
-                task.getTitle(),
-                task.getDescription(),
-                task.getCreatedAt()
-        );
+
+    @PostMapping(path = "/{id}/tags")
+    public ResponseEntity addTag(@PathVariable Long id, @RequestParam AddTagRequest request) {
+        tasksService.addTag(id, request.tagId);
+        return ResponseEntity.ok().build();
+
     }
+
+    @DeleteMapping(path = "/{id}/tags/{tagId}")
+    public ResponseEntity removeTag(@PathVariable Long id, @PathVariable Long tagId) {
+        tasksService.removeTag(id, tagId);
+        return ResponseEntity.noContent().build();
+    }
+
 }

@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pl.majchrosoft.ToDoList.Clock;
+import pl.majchrosoft.ToDoList.tags.control.TagsService;
+import pl.majchrosoft.ToDoList.tags.entity.Tag;
 import pl.majchrosoft.ToDoList.tasks.boundary.StorageService;
 import pl.majchrosoft.ToDoList.tasks.boundary.TasksRepository;
 import pl.majchrosoft.ToDoList.tasks.entity.Task;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 public class TasksService {
 
     private final TasksRepository tasksRepository;
+    private final TagsService tagsService;
     private final StorageService storageService;
     private final Clock clock;
 
@@ -57,12 +60,26 @@ public class TasksService {
         tasksRepository.deleteById(id);
     }
 
-    public void addTaskAttachments(Long id, MultipartFile file) throws IOException {
+    public void addTaskAttachments(Long id, MultipartFile file, String comment) throws IOException {
         Task task = tasksRepository.fetchById(id);
         if (!file.isEmpty()) {
-            Path path = storageService.saveFile(id, file);
-            task.addAttachment(path.toString());
+            String filename = storageService.saveFile(id, file);
+            task.addAttachment(filename, comment);
+            tasksRepository.save(task);
         }
+    }
+
+    public void addTag(Long id, Long tagId) {
+        Tag tag = tagsService.findById(tagId);
+        Task task = tasksRepository.fetchById(id);
+        task.addTag(tag);
+        tasksRepository.save(task);
+    }
+
+    public void removeTag(Long id, Long tagId) {
+        Tag tag = tagsService.findById(tagId);
+        Task task = tasksRepository.fetchById(id);
+        task.removeTag(tag);
         tasksRepository.save(task);
     }
 }
