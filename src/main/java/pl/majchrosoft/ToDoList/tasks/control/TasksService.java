@@ -61,7 +61,7 @@ public class TasksService {
         Task task = tasksRepository.fetchById(id);
         if (!file.isEmpty()) {
             Path path = storageService.saveFile(id, file);
-            task.addAttachment(path.toString()););
+            task.addAttachment(path.toString());
         }
         tasksRepository.save(task);
     }
